@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="后端,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="压测ab 工具压测均使用使用长连接使用资源：均使用单核 cpu （nginx 绑定 单核 cpu 或 docker 限制使用 –cpus=1）配置  worker_processes  2;worker_cpu_affinity 0001;  openresty 配置 content_by_lua_file 只输出 ngx.sayab -k -c 100 -n 10000 http://local">
+<meta name="keywords" content="后端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="stress testing">
+<meta property="og:url" content="http://yoursite.com/2017/03/29/stress-testing/index.html">
+<meta property="og:site_name" content="贺钧威">
+<meta property="og:description" content="压测ab 工具压测均使用使用长连接使用资源：均使用单核 cpu （nginx 绑定 单核 cpu 或 docker 限制使用 –cpus=1）配置  worker_processes  2;worker_cpu_affinity 0001;  openresty 配置 content_by_lua_file 只输出 ngx.sayab -k -c 100 -n 10000 http://local">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-04-04T05:00:07.288Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="stress testing">
+<meta name="twitter:description" content="压测ab 工具压测均使用使用长连接使用资源：均使用单核 cpu （nginx 绑定 单核 cpu 或 docker 限制使用 –cpus=1）配置  worker_processes  2;worker_cpu_affinity 0001;  openresty 配置 content_by_lua_file 只输出 ngx.sayab -k -c 100 -n 10000 http://local">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/29/stress-testing/">
+
+
+
+
+
+  <title>stress testing | 贺钧威</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">贺钧威</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/29/stress-testing/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="贺钧威">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="贺钧威">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">stress testing</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-29T15:11:23+08:00">
+                2017-03-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/blog/" itemprop="url" rel="index">
+                    <span itemprop="name">blog</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="压测"><a href="#压测" class="headerlink" title="压测"></a>压测</h1><h2 id="ab-工具压测"><a href="#ab-工具压测" class="headerlink" title="ab 工具压测"></a>ab 工具压测</h2><p>均使用使用长连接<br>使用资源：均使用单核 cpu （nginx 绑定 单核 cpu 或 docker 限制使用 –cpus=1）<br>配置</p>
+<blockquote>
+<p>worker_processes  2;<br>worker_cpu_affinity 0001;</p>
+</blockquote>
+<h3 id="openresty-配置-content-by-lua-file-只输出-ngx-say"><a href="#openresty-配置-content-by-lua-file-只输出-ngx-say" class="headerlink" title="openresty 配置 content_by_lua_file 只输出 ngx.say"></a>openresty 配置 content_by_lua_file 只输出 ngx.say</h3><p>ab -k -c 100 -n 10000 <a href="http://localhost:60000/lua-file" target="_blank" rel="noopener">http://localhost:60000/lua-file</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Concurrency Level:      100</span><br><span class="line">Time taken for tests:   0.155 seconds</span><br><span class="line">Complete requests:      10000</span><br><span class="line">Failed requests:        0</span><br><span class="line">Keep-Alive requests:    10000</span><br><span class="line">Total transferred:      1700000 bytes</span><br><span class="line">HTML transferred:       30000 bytes</span><br><span class="line">Requests per second:    64321.92 [#/sec] (mean)</span><br><span class="line">Time per request:       1.555 [ms] (mean)</span><br><span class="line">Time per request:       0.016 [ms] (mean, across all concurrent requests)</span><br><span class="line">Transfer rate:          10678.44 [Kbytes/sec] received</span><br></pre></td></tr></table></figure>
+<h3 id="openresty-配置-content-by-lua-block-只输出-ngx-say"><a href="#openresty-配置-content-by-lua-block-只输出-ngx-say" class="headerlink" title="openresty 配置 content_by_lua_block 只输出 ngx.say"></a>openresty 配置 content_by_lua_block 只输出 ngx.say</h3><p>ab -k -c 100 -n 10000 <a href="http://localhost:60000/lua" target="_blank" rel="noopener">http://localhost:60000/lua</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Concurrency Level:      100</span><br><span class="line">Time taken for tests:   0.157 seconds</span><br><span class="line">Complete requests:      10000</span><br><span class="line">Failed requests:        0</span><br><span class="line">Keep-Alive requests:    10000</span><br><span class="line">Total transferred:      1700000 bytes</span><br><span class="line">HTML transferred:       30000 bytes</span><br><span class="line">Requests per second:    63688.59 [#/sec] (mean)</span><br><span class="line">Time per request:       1.570 [ms] (mean)</span><br><span class="line">Time per request:       0.016 [ms] (mean, across all concurrent requests)</span><br><span class="line">Transfer rate:          10573.30 [Kbytes/sec] received</span><br></pre></td></tr></table></figure>
+<h3 id="openresty-配置-nana"><a href="#openresty-配置-nana" class="headerlink" title="openresty 配置 nana"></a>openresty 配置 nana</h3><p>ab -k -c 100 -n 10000 <a href="http://localhost:60000/index" target="_blank" rel="noopener">http://localhost:60000/index</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Concurrency Level:      100</span><br><span class="line">Time taken for tests:   0.303 seconds</span><br><span class="line">Complete requests:      10000</span><br><span class="line">Failed requests:        0</span><br><span class="line">Keep-Alive requests:    10000</span><br><span class="line">Total transferred:      2170000 bytes</span><br><span class="line">HTML transferred:       420000 bytes</span><br><span class="line">Requests per second:    32985.77 [#/sec] (mean)</span><br><span class="line">Time per request:       3.032 [ms] (mean)</span><br><span class="line">Time per request:       0.030 [ms] (mean, across all concurrent requests)</span><br><span class="line">Transfer rate:          6990.15 [Kbytes/sec] received</span><br></pre></td></tr></table></figure>
+<h3 id="golang-原生-http-压测"><a href="#golang-原生-http-压测" class="headerlink" title="golang 原生 http 压测"></a>golang 原生 http 压测</h3><p>ab -k -c 100 -n 10000 <a href="http://localhost:60002/bar" target="_blank" rel="noopener">http://localhost:60002/bar</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Concurrency Level:      100</span><br><span class="line">Time taken for tests:   0.328 seconds</span><br><span class="line">Complete requests:      10000</span><br><span class="line">Failed requests:        0</span><br><span class="line">Keep-Alive requests:    10000</span><br><span class="line">Total transferred:      1780000 bytes</span><br><span class="line">HTML transferred:       370000 bytes</span><br><span class="line">Requests per second:    30494.68 [#/sec] (mean)</span><br><span class="line">Time per request:       3.279 [ms] (mean)</span><br><span class="line">Time per request:       0.033 [ms] (mean, across all concurrent requests)</span><br><span class="line">Transfer rate:          5300.83 [Kbytes/sec] received</span><br></pre></td></tr></table></figure>
+<h3 id="golang-gin-框架压测"><a href="#golang-gin-框架压测" class="headerlink" title="golang gin 框架压测"></a>golang gin 框架压测</h3><p>ab -k -c 100 -n 10000 <a href="http://localhost:60002/ping" target="_blank" rel="noopener">http://localhost:60002/ping</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Concurrency Level:      100</span><br><span class="line">Time taken for tests:   0.462 seconds</span><br><span class="line">Complete requests:      10000</span><br><span class="line">Failed requests:        0</span><br><span class="line">Keep-Alive requests:    10000</span><br><span class="line">Total transferred:      1650000 bytes</span><br><span class="line">HTML transferred:       180000 bytes</span><br><span class="line">Requests per second:    21648.77 [#/sec] (mean)</span><br><span class="line">Time per request:       4.619 [ms] (mean)</span><br><span class="line">Time per request:       0.046 [ms] (mean, across all concurrent requests)</span><br><span class="line">Transfer rate:          3488.33 [Kbytes/sec] received</span><br></pre></td></tr></table></figure>
+<h2 id="wrk-工具压测"><a href="#wrk-工具压测" class="headerlink" title="wrk 工具压测"></a>wrk 工具压测</h2><h3 id="openresty-配置-content-by-lua-file-只输出-ngx-say-1"><a href="#openresty-配置-content-by-lua-file-只输出-ngx-say-1" class="headerlink" title="openresty 配置 content_by_lua_file 只输出 ngx.say"></a>openresty 配置 content_by_lua_file 只输出 ngx.say</h3><p>wrk -t1 -c 100 -d10s <a href="http://localhost:60000/lua-file" target="_blank" rel="noopener">http://localhost:60000/lua-file</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Running 10s test @ http://localhost:60000/lua-file</span><br><span class="line">  1 threads and 100 connections</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency     3.01ms    3.91ms  24.57ms   83.61%</span><br><span class="line">    Req/Sec    67.62k     4.07k   73.21k    80.00%</span><br><span class="line">  672346 requests in 10.01s, 121.19MB read</span><br><span class="line">Requests/sec:  67143.94</span><br><span class="line">Transfer/sec:     12.10MB</span><br></pre></td></tr></table></figure>
+<h3 id="openresty-配置-content-by-lua-block-只输出-ngx-say-1"><a href="#openresty-配置-content-by-lua-block-只输出-ngx-say-1" class="headerlink" title="openresty 配置 content_by_lua_block 只输出 ngx.say"></a>openresty 配置 content_by_lua_block 只输出 ngx.say</h3><p>wrk -t1 -c 100 -d10s <a href="http://localhost:60000/lua" target="_blank" rel="noopener">http://localhost:60000/lua</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Running 10s test @ http://localhost:60000/lua</span><br><span class="line">  1 threads and 100 connections</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency     3.09ms    4.08ms  25.10ms   83.45%</span><br><span class="line">    Req/Sec    69.08k     3.72k   75.70k    73.00%</span><br><span class="line">  686708 requests in 10.02s, 123.78MB read</span><br><span class="line">Requests/sec:  68558.83</span><br><span class="line">Transfer/sec:     12.36MB</span><br></pre></td></tr></table></figure>
+<h3 id="openresty-配置-nana-1"><a href="#openresty-配置-nana-1" class="headerlink" title="openresty 配置 nana"></a>openresty 配置 nana</h3><p>wrk -t1 -c 100 -d10s <a href="http://localhost:60000/index" target="_blank" rel="noopener">http://localhost:60000/index</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Running 10s test @ http://localhost:60000/index</span><br><span class="line">  1 threads and 100 connections</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency     4.19ms    4.44ms  29.00ms   82.53%</span><br><span class="line">    Req/Sec    34.98k     2.18k   37.34k    84.00%</span><br><span class="line">  348020 requests in 10.03s, 78.33MB read</span><br><span class="line">Requests/sec:  34713.01</span><br><span class="line">Transfer/sec:      7.81MB</span><br></pre></td></tr></table></figure>
+<h3 id="golang-原生-http-压测-1"><a href="#golang-原生-http-压测-1" class="headerlink" title="golang 原生 http 压测"></a>golang 原生 http 压测</h3><p>wrk -t1 -c 100 -d10s <a href="http://localhost:60002/bar" target="_blank" rel="noopener">http://localhost:60002/bar</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Running 10s test @ http://localhost:60002/bar</span><br><span class="line">  1 threads and 100 connections</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency     6.45ms   10.80ms 127.35ms   88.51%</span><br><span class="line">    Req/Sec    30.82k     5.73k   47.39k    80.00%</span><br><span class="line">  307005 requests in 10.02s, 45.09MB read</span><br><span class="line">Requests/sec:  30626.31</span><br><span class="line">Transfer/sec:      4.50MB</span><br></pre></td></tr></table></figure>
+<h3 id="golang-gin-框架压测-1"><a href="#golang-gin-框架压测-1" class="headerlink" title="golang gin 框架压测"></a>golang gin 框架压测</h3><p>wrk -t1 -c 100 -d10s <a href="http://localhost:60002/ping" target="_blank" rel="noopener">http://localhost:60002/ping</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Running 10s test @ http://localhost:60002/ping</span><br><span class="line">  1 threads and 100 connections</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency     8.05ms   10.04ms  78.14ms   85.71%</span><br><span class="line">    Req/Sec    20.39k     3.19k   26.53k    68.00%</span><br><span class="line">  203091 requests in 10.02s, 27.31MB read</span><br><span class="line">Requests/sec:  20260.14</span><br><span class="line">Transfer/sec:      2.72MB</span><br></pre></td></tr></table></figure>
+<h4 id="laravel-不适合并发场景，提供小数据参考"><a href="#laravel-不适合并发场景，提供小数据参考" class="headerlink" title="laravel(不适合并发场景，提供小数据参考)"></a>laravel(不适合并发场景，提供小数据参考)</h4><p>小数据测试<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Concurrency Level:      5</span><br><span class="line">Complete requests:      100</span><br><span class="line">Requests per second:    140.32 [#/sec] (mean)</span><br><span class="line">Time per request:       35.632 [ms] (mean)</span><br><span class="line"></span><br><span class="line">Concurrency Level:      10</span><br><span class="line">Complete requests:      100</span><br><span class="line">Requests per second:    109.62 [#/sec] (mean)</span><br><span class="line">Time per request:       91.227 [ms] (mean)</span><br><span class="line"></span><br><span class="line">Concurrency Level:      15</span><br><span class="line">Complete requests:      100</span><br><span class="line">Requests per second:    138.24 [#/sec] (mean)</span><br><span class="line">Time per request:       108.510 [ms] (mean)</span><br><span class="line"></span><br><span class="line">Concurrency Level:      20</span><br><span class="line">Complete requests:      100</span><br><span class="line">Requests per second:    140.74 [#/sec] (mean)</span><br><span class="line">Time per request:       142.101 [ms] (mean)</span><br></pre></td></tr></table></figure></p>
+<p>细腻的数据表明laravel在超过5个请求的时候，就开始成倍增长了</p>
+<p>访问一次mysql<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Concurrency Level:      100</span><br><span class="line">Time taken for tests:   73.146 seconds</span><br><span class="line">Complete requests:      10000</span><br><span class="line">Failed requests:        9877</span><br><span class="line">   (Connect: 0, Receive: 0, Length: 9877, Exceptions: 0)</span><br><span class="line">Non-2xx responses:      9877</span><br><span class="line">Keep-Alive requests:    0</span><br><span class="line">Total transferred:      3168103 bytes</span><br><span class="line">HTML transferred:       194145 bytes</span><br><span class="line">Requests per second:    136.71 [#/sec] (mean)</span><br><span class="line">Time per request:       731.455 [ms] (mean)</span><br><span class="line">Time per request:       7.315 [ms] (mean, across all concurrent requests)</span><br><span class="line">Transfer rate:          42.30 [Kbytes/sec] received</span><br></pre></td></tr></table></figure></p>
+<h4 id="ThinkPHP"><a href="#ThinkPHP" class="headerlink" title="ThinkPHP"></a>ThinkPHP</h4><p>访问一次mysql<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Concurrency Level:      100</span><br><span class="line">Time taken for tests:   22.863 seconds</span><br><span class="line">Complete requests:      10000</span><br><span class="line">Failed requests:        0</span><br><span class="line">Keep-Alive requests:    0</span><br><span class="line">Total transferred:      6840000 bytes</span><br><span class="line">HTML transferred:       3640000 bytes</span><br><span class="line">Requests per second:    437.39 [#/sec] (mean)</span><br><span class="line">Time per request:       228.631 [ms] (mean)</span><br><span class="line">Time per request:       2.286 [ms] (mean, across all concurrent requests)</span><br><span class="line">Transfer rate:          292.16 [Kbytes/sec] received</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/后端/" rel="tag"># 后端</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/29/vim/" rel="next" title="Vim 使用技巧">
+                <i class="fa fa-chevron-left"></i> Vim 使用技巧
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/30/openresty-web-api-framework/" rel="prev" title="Openresty web api framework">
+                Openresty web api framework <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">贺钧威</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#压测"><span class="nav-number">1.</span> <span class="nav-text">压测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ab-工具压测"><span class="nav-number">1.1.</span> <span class="nav-text">ab 工具压测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#openresty-配置-content-by-lua-file-只输出-ngx-say"><span class="nav-number">1.1.1.</span> <span class="nav-text">openresty 配置 content_by_lua_file 只输出 ngx.say</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#openresty-配置-content-by-lua-block-只输出-ngx-say"><span class="nav-number">1.1.2.</span> <span class="nav-text">openresty 配置 content_by_lua_block 只输出 ngx.say</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#openresty-配置-nana"><span class="nav-number">1.1.3.</span> <span class="nav-text">openresty 配置 nana</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#golang-原生-http-压测"><span class="nav-number">1.1.4.</span> <span class="nav-text">golang 原生 http 压测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#golang-gin-框架压测"><span class="nav-number">1.1.5.</span> <span class="nav-text">golang gin 框架压测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wrk-工具压测"><span class="nav-number">1.2.</span> <span class="nav-text">wrk 工具压测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#openresty-配置-content-by-lua-file-只输出-ngx-say-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">openresty 配置 content_by_lua_file 只输出 ngx.say</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#openresty-配置-content-by-lua-block-只输出-ngx-say-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">openresty 配置 content_by_lua_block 只输出 ngx.say</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#openresty-配置-nana-1"><span class="nav-number">1.2.3.</span> <span class="nav-text">openresty 配置 nana</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#golang-原生-http-压测-1"><span class="nav-number">1.2.4.</span> <span class="nav-text">golang 原生 http 压测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#golang-gin-框架压测-1"><span class="nav-number">1.2.5.</span> <span class="nav-text">golang gin 框架压测</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#laravel-不适合并发场景，提供小数据参考"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">laravel(不适合并发场景，提供小数据参考)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ThinkPHP"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">ThinkPHP</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">贺钧威</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
